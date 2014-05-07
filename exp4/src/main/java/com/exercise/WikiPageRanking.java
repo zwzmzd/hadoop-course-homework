@@ -21,12 +21,12 @@ public class WikiPageRanking {
  
         //Job 1: Parse XML
         {
-	        String[] funcArgs = {"wiki/in", "wiki/ranking/iter00"};
+	        String[] funcArgs = {args[0], "wiki/ranking/iter00"};
 	        pageRanking.runXmlParsing(funcArgs);
         }
  
         int runs = 0;
-        for (; runs < 5; runs++) {
+        for (; runs < 1; runs++) {
             //Job 2: Calculate new rank
         	String[] funcArgs = {"wiki/ranking/iter"+nf.format(runs), "wiki/ranking/iter"+nf.format(runs + 1)};
             pageRanking.runRankCalculation(funcArgs);
@@ -34,6 +34,7 @@ public class WikiPageRanking {
  
         //Job 3: Order by rank
         //pageRanking.runRankOrdering("wiki/ranking/iter"+nf.format(runs), "wiki/result");
+        System.exit(0);
  
     }
  
@@ -58,13 +59,11 @@ public class WikiPageRanking {
 //        JobClient.runJob(conf);
         
         Configuration conf = new Configuration();
-		conf.set(XmlInputFormat.START_TAG_KEY, "<page>");
-		conf.set(XmlInputFormat.END_TAG_KEY, "</page>");
 		
-		Job job = new Job(conf, "PageRankIter");
+		Job job = new Job(conf, "PageLinkProcess");
 		job.setJarByClass(WikiPageRanking.class);
 		
-		job.setInputFormatClass(XmlInputFormat.class);
+		job.setInputFormatClass(TextInputFormat.class);
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		
