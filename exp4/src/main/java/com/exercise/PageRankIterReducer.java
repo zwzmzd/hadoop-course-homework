@@ -17,10 +17,6 @@ public class PageRankIterReducer extends Reducer<Text, Text, Text, Text> {
         String links = "";
         String pageWithRank;
  
-        // For each otherPage:
-        // - check control characters
-        // - calculate pageRank share <rank> / count(<links>)
-        // - add the share to sumShareOtherPageRanks
         Iterator<Text> it = values.iterator();
         while(it.hasNext()){
             pageWithRank = it.next().toString();
@@ -36,8 +32,6 @@ public class PageRankIterReducer extends Reducer<Text, Text, Text, Text> {
             }
             
             if (pageWithRank.startsWith("c")) {
-//            	context.write(key, new Text(pageWithRank.substring(1)));
-//            	return;
             	N = Integer.valueOf(pageWithRank.substring(1));
             	continue;
             }
