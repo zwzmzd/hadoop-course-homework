@@ -15,6 +15,11 @@
   </properties>
 
   <dependencies>
+  <dependency>
+<groupId>org.apache.hadoop</groupId>
+<artifactId>hadoop-core</artifactId>
+<version>0.20.205.0</version>
+</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
