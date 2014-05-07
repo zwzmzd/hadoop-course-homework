@@ -69,7 +69,7 @@ public class WikiPageRanking {
 		
 		// ����Mapper��Reducer
 		job.setMapperClass(WikiPageLinksMapper.class);
-		job.setReducerClass(WikiLinksReducer.class);
+		job.setReducerClass(WikiPageLinksReducer.class);
 		
 		// Map�׶β���
 		job.setMapOutputKeyClass(Text.class);
