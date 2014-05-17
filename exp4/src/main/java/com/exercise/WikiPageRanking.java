@@ -26,38 +26,22 @@ public class WikiPageRanking {
         }
  
         int runs = 0;
-        for (; runs < 1; runs++) {
+        for (; runs < 5; runs++) {
             //Job 2: Calculate new rank
         	String[] funcArgs = {"wiki/ranking/iter"+nf.format(runs), "wiki/ranking/iter"+nf.format(runs + 1)};
             pageRanking.runRankCalculation(funcArgs);
         }
  
         //Job 3: Order by rank
-        //pageRanking.runRankOrdering("wiki/ranking/iter"+nf.format(runs), "wiki/result");
+        {
+            String[] funcArgs = {"wiki/ranking/iter"+nf.format(runs), "wiki/result"};
+            pageRanking.runRankViewer(funcArgs);
+        }
+        
         System.exit(0);
- 
     }
  
     public void runXmlParsing(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
-//        JobConf conf = new JobConf(WikiPageRanking.class);
-// 
-//        conf.set(XmlInputFormat.START_TAG_KEY, "<page>");
-//        conf.set(XmlInputFormat.END_TAG_KEY, "</page>");
-// 
-//        // Input / Mapper
-//        FileInputFormat.setInputPaths(conf, new Path(inputPath));
-//        conf.setInputFormat(XmlInputFormat.class);
-//        conf.setMapperClass(WikiPageLinksMapper.class);
-// 
-//        // Output / Reducer
-//        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
-//        conf.setOutputFormat(TextOutputFormat.class);
-//        conf.setOutputKeyClass(Text.class);
-//        conf.setOutputValueClass(Text.class);
-//        conf.setReducerClass(WikiLinksReducer.class);
-// 
-//        JobClient.runJob(conf);
-        
         Configuration conf = new Configuration();
 		
 		Job job = new Job(conf, "PageLinkProcess");
@@ -67,15 +51,15 @@ public class WikiPageRanking {
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		
-		// ����Mapper��Reducer
+		// Mapper & Reducer
 		job.setMapperClass(WikiPageLinksMapper.class);
 		job.setReducerClass(WikiPageLinksReducer.class);
 		
-		// Map�׶β���
+		// Map
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
 		
-		// Reduce�׶β���
+		// Reduce
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
@@ -91,36 +75,41 @@ public class WikiPageRanking {
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		
-		// ����Mapper��Reducer
+		// Mapper & Reducer
 		job.setMapperClass(PageRankIterMapper.class);
 		job.setReducerClass(PageRankIterReducer.class);
 		
-		// Map�׶β���
+		// Map
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
 		
-		// Reduce�׶β���
+		// Reduce
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
 		job.waitForCompletion(true);
     }
  
-/*
-    private void runRankOrdering(String inputPath, String outputPath) throws IOException {
-        JobConf conf = new JobConf(WikiPageRanking.class);
- 
-        conf.setOutputKeyClass(FloatWritable.class);
-        conf.setOutputValueClass(Text.class);
-        conf.setInputFormat(TextInputFormat.class);
-        conf.setOutputFormat(TextOutputFormat.class);
- 
-        FileInputFormat.setInputPaths(conf, new Path(inputPath));
-        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
- 
-        conf.setMapperClass(RankingMapper.class);
- 
-        JobClient.runJob(conf);
+    private void runRankViewer(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
+    	Configuration conf = new Configuration();
+    	Job job = new Job(conf, "PageRankViewer");
+    	job.setJarByClass(WikiPageRanking.class);
+    	
+    	job.setInputFormatClass(TextInputFormat.class);
+    	FileInputFormat.addInputPath(job, new Path(args[0]));
+    	FileOutputFormat.setOutputPath(job, new Path(args[1]));
+    	
+    	//Mapper
+    	job.setMapperClass(PageRankViewerMapper.class);
+    	
+    	//Map
+    	job.setMapOutputKeyClass(DecFloatWritable.class);
+    	job.setMapOutputValueClass(Text.class);
+    	
+    	//Reduce
+    	job.setOutputKeyClass(Text.class);
+    	job.setOutputValueClass(Text.class);
+    	
+    	job.waitForCompletion(true);	
     }
-*/
 }
